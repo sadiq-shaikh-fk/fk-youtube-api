@@ -68,115 +68,83 @@ def get_channel_details_from_id(channel_id):
     else:
         try:
             channel_link = str("www.youtube.com/channel/" + channel_details_clean["items"]["id"])
-            print(channel_link)
         except:
             channel_link = None
-            print(channel_link)
     # ------------------------------------------------------------------------------------------------
         try:
             channel_id = channel_details_clean["items"]["id"]
-            print(channel_id)
         except:
             channel_id = None
-            print(channel_id)
     # ------------------------------------------------------------------------------------------------
         try:
             channel_title = channel_details_clean["items"]["snippet"]["title"]
-            print(channel_title)
         except:
             channel_title = None
-            print(channel_title)
 # ------------------------------------------------------------------------------------------------
         try:
             channel_desc = channel_details_clean["items"]["snippet"]["description"]
-            print(channel_desc)
         except:
             channel_desc = None
-            print(channel_desc)
 # ------------------------------------------------------------------------------------------------
         try:
             channel_publishedAt = channel_details_clean["items"]["snippet"]["publishedAt"]
-            print(channel_publishedAt)
         except:
             channel_publishedAt = None
-            print(channel_publishedAt)
 # ------------------------------------------------------------------------------------------------
         try:
             channel_thumbnail_high_url = channel_details_clean["items"]["snippet"]["thumbnails"]["high"]["url"]
-            print(channel_thumbnail_high_url)
         except:
             channel_thumbnail_high_url = None
-            print(channel_thumbnail_high_url)
 # ------------------------------------------------------------------------------------------------
         try:
             channel_country = channel_details_clean["items"]["snippet"]["country"]
-            print(channel_country)
         except:
             channel_country = None
-            print(channel_country)
 # ------------------------------------------------------------------------------------------------
         try:
             channel_upload_playlist_id = channel_details_clean["items"]["contentDetails"]["relatedPlaylists"]["uploads"]
-            print(channel_upload_playlist_id)
         except:
             channel_upload_playlist_id = None
-            print(channel_upload_playlist_id)
 # ------------------------------------------------------------------------------------------------
         try:
             channel_view_count = channel_details_clean["items"]["statistics"]["viewCount"]
-            print(channel_view_count)
         except:
             channel_view_count = None
-            print(channel_view_count)
 # ------------------------------------------------------------------------------------------------
         try:
             channel_subscriber_count = channel_details_clean["items"]["statistics"]["subscriberCount"]
-            print(channel_subscriber_count)
         except:
             channel_subscriber_count = None
-            print(channel_subscriber_count)
 # ------------------------------------------------------------------------------------------------
         try:
             channel_video_count = channel_details_clean["items"]["statistics"]["videoCount"]
-            print(channel_video_count)
         except:
             channel_video_count = None
-            print(channel_video_count)
 # ------------------------------------------------------------------------------------------------
         try:
             channel_privacy_status = channel_details_clean["items"]["status"]["privacyStatus"]
-            print(channel_privacy_status)
         except:
             channel_privacy_status = None
-            print(channel_privacy_status)
 # ------------------------------------------------------------------------------------------------
         try:
             channel_made_for_kids = channel_details_clean["items"]["status"]["madeForKids"]
-            print(channel_made_for_kids)
         except:
             channel_made_for_kids = None
-            print(channel_made_for_kids)
 # ------------------------------------------------------------------------------------------------
         try:
             channel_trailer_video_url = channel_details_clean["items"]["brandingSettings"]["channel"]["unsubscribedTrailer"]
-            print(channel_trailer_video_url)
         except:
             channel_trailer_video_url = None
-            print(channel_trailer_video_url)
 # ------------------------------------------------------------------------------------------------
         try:
             channel_keywords = channel_details_clean["items"]["brandingSettings"]["channel"]["keywords"]
-            print(channel_keywords)
         except:
             channel_keywords = None
-            print(channel_keywords)
 # ------------------------------------------------------------------------------------------------
         try:
             channel_image_banner_url = channel_details_clean["items"]["brandingSettings"]["image"]["bannerExternalUrl"]
-            print(channel_image_banner_url)
         except:
             channel_image_banner_url = None
-            print(channel_image_banner_url)
 
         return [
             channel_link, channel_id, channel_title, channel_desc, channel_publishedAt, 
