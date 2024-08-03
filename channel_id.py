@@ -64,21 +64,24 @@ def get_channel_details_from_id(channel_id):
         return {}
 
     channel_data = {
-        'channel_link': None,
-        'channel_id': None,
-        'channel_title': None,
-        'channel_desc': None,
-        'channel_publishedAt': None,
-        'channel_thumbnail_high_url': None,
-        'channel_country': None,
-        'channel_upload_playlist_id': None,
-        'channel_view_count': None,
-        'channel_subscriber_count': None,
-        'channel_video_count': None,
-        'channel_privacy_status': None,
-        'channel_image_banner_url': None,
-        'channel_trailer_video_url': None,
-        'channel_keywords': None
+        'channel_link': None, #1
+        'channel_id': None, #2
+        'channel_title': None, #3
+        'channel_desc': None, #4
+        'channel_custom_url': None, #5
+        'channel_publishedAt': None, #6
+        'channel_thumbnail_high_url': None, #7
+        'channel_country': None, #8
+        'channel_upload_playlist_id': None, #9
+        'channel_view_count': None, #10
+        'channel_subscriber_count': None, #11
+        'channel_video_count': None, #12
+        'channel_privacy_status': None, #13 
+        'channel_made_for_kids': None, #14
+        'channel_trailer_video_url': None, #15
+        'channel_keywords': None, #16
+        'channel_image_banner_url': None, #17
+        
     }
 
     try:
