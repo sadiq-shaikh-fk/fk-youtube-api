@@ -80,8 +80,7 @@ def get_channel_details_from_id(channel_id):
         'channel_made_for_kids': None, #14
         'channel_trailer_video_url': None, #15
         'channel_keywords': None, #16
-        'channel_image_banner_url': None, #17
-        
+        'channel_image_banner_url': None, #17   
     }
 
     try:
@@ -104,6 +103,11 @@ def get_channel_details_from_id(channel_id):
     except:
         pass
 
+    try:
+        channel_data['channel_custom_url'] = channel_details_clean["item"]['snippet']['custom_url']
+    except:
+        pass
+    
     try:
         channel_data['channel_publishedAt'] = channel_details_clean["items"]["snippet"]["publishedAt"]
     except:
