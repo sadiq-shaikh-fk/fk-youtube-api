@@ -104,10 +104,10 @@ def get_channel_details_from_id(channel_id):
         pass
 
     try:
-        channel_data['channel_custom_url'] = channel_details_clean["item"]['snippet']['custom_url']
+        channel_data['channel_custom_url'] = channel_details_clean["item"]['snippet']['customUrl']
     except:
         pass
-    
+
     try:
         channel_data['channel_publishedAt'] = channel_details_clean["items"]["snippet"]["publishedAt"]
     except:
