@@ -65,7 +65,7 @@ def get_channel_details_from_id(channel_id):
 
     channel_data = {
         'channel_link': None, #1
-        'channel_id': None, #2
+        'yt_channel_id': None, #2
         'channel_title': None, #3
         'channel_desc': None, #4
         'channel_custom_url': None, #5
@@ -90,7 +90,7 @@ def get_channel_details_from_id(channel_id):
         pass
 
     try:
-        channel_data['channel_id'] = channel_details_clean["items"]["id"]
+        channel_data['yt_channel_id'] = channel_details_clean["items"]["id"]
     except:
         pass
 
