@@ -1,25 +1,14 @@
 from googleapiclient.discovery import build, HttpError
 import asyncio
 import aiohttp
+import os
+from dotenv import load_dotenv
 
-# List of API keys
-api_keys = [
-    "AIzaSyBIwH-0I1RknoVDzU3Lv9DumnR5X4Kzk5Q",   # 1 Fame Keeda Website
-    "AIzaSyDploAX5ItaTrZXv46o7ZwYwFTTNtBRZv0",   # 2 Fame Space
-    "AIzaSyAYF4raqM5IqoRl47JFn5q5jXmOQSHzAw4",   # 3 Youtube Scapper 500
-    "AIzaSyCKIr0PTua6oshKqW0hHkKr2_8UCO9clRA",   # 4 My Maps Project
-    "AIzaSyCZMOL8NXA-6yumpXbBJszRc9wL4RJhMGM",   # 5 FK Metabase
-    "AIzaSyDOB1YlqGVRU4r4cRnMeDP5_KsnLIu8H_Y",   # 6 My Project 76789
-    "AIzaSyChSeWpt_Fyv57sYtA0EWcwh7GYEle1Ttk",   # 7 YTStats1234
-    "AIzaSyC9YY6W5CK2bMFD4Bg05lsSdRkc1c7jYlA",   # 8 inf active status
-    "AIzaSyAE1EGgnf7D7z8JvjbmJpl-AOTl8ItRtq8",   # 9 Apollo 
-    "AIzaSyBjorP-CAlBNTxGDUkhzOeVtNUPcfN8J3I",   # 10 language teaching assistant
-    "AIzaSyCq6qGF0jacKcbDxPokPEQJ31cPzbGHba8",   # 11 Booking App
-    "AIzaSyDdRA5R3fzUTDqbAFe7I8xAwDBLCph63Js",   # 12 drive image link
-    "AIzaSyD0XlKMiGnlNxC02XmNZvh8SxDiJGU6FuM",   # 13 unknown project1
-    "AIzaSyAN4Hvy_6hzR3bCf8WDHpBjsvh66nueXrs",   # 14 unknown project2
-    "AIzaSyDeIlfCzB5S7AO_ZslcdPlw-blYNOH0_po"    # 15 unknown project3
-]
+# Load environment variables from .env file
+load_dotenv()
+
+# Get API keys from environment variable and split them into a list
+api_keys = os.getenv("API_KEYS").split(',')
 
 api_service_name = "youtube"
 api_version = "v3"
