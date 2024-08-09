@@ -1,6 +1,6 @@
 from googleapiclient.discovery import build, HttpError
-import time
-import ast
+import asyncio
+import aiohttp
 
 # List of API keys
 api_keys = [
@@ -25,150 +25,57 @@ api_service_name = "youtube"
 api_version = "v3"
 current_key_index = 0
 
-def build_youtube_service(api_key):
+async def build_youtube_service(api_key):
     return build(api_service_name, api_version, developerKey=api_key)
 
 youtube = build_youtube_service(api_keys[current_key_index])
 
 
-def get_channel_details_from_id(channel_id):
+async def get_channel_details_from_id(channel_id):
     global current_key_index, youtube
 
-    while True:
-        request = youtube.channels().list(
-            part="brandingSettings,contentDetails,contentOwnerDetails,id,localizations,snippet,statistics,status,topicDetails",
-            id=channel_id,
-            fields="items(id,snippet(title,description,publishedAt,thumbnails(high),localized,country),statistics(viewCount,subscriberCount,videoCount),status(privacyStatus,madeForKids),brandingSettings(image,channel),contentDetails(relatedPlaylists(uploads)))"
-        )
+    async with aiohttp.ClientSession() as session:
+        while True:
+            try:
+                youtube = await build_youtube_service(api_keys[current_key_index])
+                request = youtube.channels().list(
+                    part="brandingSettings,contentDetails,contentOwnerDetails,id,localizations,snippet,statistics,status,topicDetails",
+                    id=channel_id,
+                    fields="items(id,snippet(title,description,publishedAt,thumbnails(high),localized,country),statistics(viewCount,subscriberCount,videoCount),status(privacyStatus,madeForKids),brandingSettings(image,channel),contentDetails(relatedPlaylists(uploads)))"
+                )
 
-        try:
-            response = request.execute()
-            break
+                response = request.execute()
+                break
 
-        except HttpError as e:
-            if e.resp.status == 403 and 'exceeded' in e.reason:
-                print(f"Quota exceeded for key: {api_keys[current_key_index]}. Trying next key...")
-                current_key_index = (current_key_index + 1) % len(api_keys)
-                youtube = build_youtube_service(api_keys[current_key_index])
-                time.sleep(1)  # Avoid too rapid retries
-            else:
-                print(f'API URL invalid or other error: {e}')
-                return {}
+            except HttpError as e:
+                if e.resp.status == 403 and 'exceeded' in e.reason:
+                    print(f"Quota exceeded for key: {api_keys[current_key_index]}. Trying next key...")
+                    current_key_index = (current_key_index + 1) % len(api_keys)
+                    await asyncio.sleep(1)  # Avoid too rapid retries
+                else:
+                    return {"error": f"API Error: {str(e)}"}
 
-    channel_details_str = str(response)
-    channel_details_str1 = channel_details_str.replace("[", "")
-    channel_details_str2 = channel_details_str1.replace("]", "")
-    channel_details_clean = ast.literal_eval(channel_details_str2)
+    channel_details_clean = response.get('items', [{}])[0]
 
-    if len(channel_details_clean) == 0:
-        return {}
-
-    channel_data = {
-        'channel_link': None, #1
-        'yt_channel_id': None, #2
-        'channel_title': None, #3
-        'channel_desc': None, #4
-        'channel_custom_url': None, #5
-        'channel_publishedAt': None, #6
-        'channel_thumbnail_high_url': None, #7
-        'channel_country': None, #8
-        'channel_upload_playlist_id': None, #9
-        'channel_view_count': None, #10
-        'channel_subscriber_count': None, #11
-        'channel_video_count': None, #12
-        'channel_privacy_status': None, #13 
-        'channel_made_for_kids': None, #14
-        'channel_trailer_video_url': None, #15
-        'channel_keywords': None, #16
-        'channel_image_banner_url': None, #17   
+    return {
+        'channel_link': f"www.youtube.com/channel/{channel_details_clean.get('id', '')}",
+        'yt_channel_id': channel_details_clean.get("id", ""),
+        'channel_title': channel_details_clean.get("snippet", {}).get("title", ""),
+        'channel_desc': channel_details_clean.get("snippet", {}).get("description", ""),
+        'channel_custom_url': channel_details_clean.get("snippet", {}).get('customUrl', ""),
+        'channel_publishedAt': channel_details_clean.get("snippet", {}).get("publishedAt", ""),
+        'channel_thumbnail_high_url': channel_details_clean.get("snippet", {}).get("thumbnails", {}).get("high", {}).get("url", ""),
+        'channel_country': channel_details_clean.get("snippet", {}).get("country", ""),
+        'channel_upload_playlist_id': channel_details_clean.get("contentDetails", {}).get("relatedPlaylists", {}).get("uploads", ""),
+        'channel_view_count': channel_details_clean.get("statistics", {}).get("viewCount", ""),
+        'channel_subscriber_count': channel_details_clean.get("statistics", {}).get("subscriberCount", ""),
+        'channel_video_count': channel_details_clean.get("statistics", {}).get("videoCount", ""),
+        'channel_privacy_status': channel_details_clean.get("status", {}).get("privacyStatus", ""),
+        'channel_made_for_kids': channel_details_clean.get("status", {}).get("madeForKids", ""),
+        'channel_trailer_video_url': channel_details_clean.get("brandingSettings", {}).get("channel", {}).get("unsubscribedTrailer", ""),
+        'channel_keywords': channel_details_clean.get("brandingSettings", {}).get("channel", {}).get("keywords", ""),
+        'channel_image_banner_url': channel_details_clean.get("brandingSettings", {}).get("image", {}).get("bannerExternalUrl", "")
     }
-
-    try:
-        channel_data['channel_link'] = f"www.youtube.com/channel/{channel_details_clean['items']['id']}"
-    except:
-        pass
-
-    try:
-        channel_data['yt_channel_id'] = channel_details_clean["items"]["id"]
-    except:
-        pass
-
-    try:
-        channel_data['channel_title'] = channel_details_clean["items"]["snippet"]["title"]
-    except:
-        pass
-
-    try:
-        channel_data['channel_desc'] = channel_details_clean["items"]["snippet"]["description"]
-    except:
-        pass
-
-    try:
-        channel_data['channel_custom_url'] = channel_details_clean["item"]['snippet']['customUrl']
-    except:
-        pass
-
-    try:
-        channel_data['channel_publishedAt'] = channel_details_clean["items"]["snippet"]["publishedAt"]
-    except:
-        pass
-
-    try:
-        channel_data['channel_thumbnail_high_url'] = channel_details_clean["items"]["snippet"]["thumbnails"]["high"]["url"]
-    except:
-        pass
-
-    try:
-        channel_data['channel_country'] = channel_details_clean["items"]["snippet"]["country"]
-    except:
-        pass
-
-    try:
-        channel_data['channel_upload_playlist_id'] = channel_details_clean["items"]["contentDetails"]["relatedPlaylists"]["uploads"]
-    except:
-        pass
-
-    try:
-        channel_data['channel_view_count'] = channel_details_clean["items"]["statistics"]["viewCount"]
-    except:
-        pass
-
-    try:
-        channel_data['channel_subscriber_count'] = channel_details_clean["items"]["statistics"]["subscriberCount"]
-    except:
-        pass
-
-    try:
-        channel_data['channel_video_count'] = channel_details_clean["items"]["statistics"]["videoCount"]
-    except:
-        pass
-
-    try:
-        channel_data['channel_privacy_status'] = channel_details_clean["items"]["status"]["privacyStatus"]
-    except:
-        pass
-
-    try:
-        channel_data['channel_made_for_kids'] = channel_details_clean["items"]["status"]["madeForKids"]
-    except:
-        pass
-
-    try:
-        channel_data['channel_trailer_video_url'] = channel_details_clean["items"]["brandingSettings"]["channel"]["unsubscribedTrailer"]
-    except:
-        pass
-
-    try:
-        channel_data['channel_keywords'] = channel_details_clean["items"]["brandingSettings"]["channel"]["keywords"]
-    except:
-        pass
-
-    try:
-        channel_data['channel_image_banner_url'] = channel_details_clean["items"]["brandingSettings"]["image"]["bannerExternalUrl"]
-    except:
-        pass
-
-    return channel_data
 
 
 # def get_channel_details_from_id(channel_id):
