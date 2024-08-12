@@ -11,4 +11,6 @@ services:
           memory: 2G
       restart_policy:
         condition: on-failure
+    ports:
+      - "8000:8000"  # This maps container port 8000 to host port 8000
     command: gunicorn -w 4 -k uvicorn.workers.UvicornWorker channel_id_route:app --bind 0.0.0.0:8000
