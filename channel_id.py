@@ -46,6 +46,9 @@ async def get_channel_details_from_id(channel_id):
 
     channel_details_clean = response.get('items', [{}])[0]
 
+    # Extract madeForKids and set to None if it's not provided
+    made_for_kids = channel_details_clean.get("status", {}).get("madeForKids", None)
+
     return {
         'channel_link': f"www.youtube.com/channel/{channel_details_clean.get('id', '')}",
         'yt_channel_id': channel_details_clean.get("id", ""),
@@ -60,7 +63,7 @@ async def get_channel_details_from_id(channel_id):
         'channel_subscriber_count': channel_details_clean.get("statistics", {}).get("subscriberCount", ""),
         'channel_video_count': channel_details_clean.get("statistics", {}).get("videoCount", ""),
         'channel_privacy_status': channel_details_clean.get("status", {}).get("privacyStatus", ""),
-        'channel_made_for_kids': channel_details_clean.get("status", {}).get("madeForKids", ""),
+        'channel_made_for_kids': made_for_kids,  # Return None if madeForKids is not present
         'channel_trailer_video_url': channel_details_clean.get("brandingSettings", {}).get("channel", {}).get("unsubscribedTrailer", ""),
         'channel_keywords': channel_details_clean.get("brandingSettings", {}).get("channel", {}).get("keywords", ""),
         'channel_image_banner_url': channel_details_clean.get("brandingSettings", {}).get("image", {}).get("bannerExternalUrl", "")
