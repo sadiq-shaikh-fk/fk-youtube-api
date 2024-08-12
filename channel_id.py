@@ -17,7 +17,7 @@ current_key_index = 0
 async def build_youtube_service(api_key):
     return build(api_service_name, api_version, developerKey=api_key)
 
-youtube = build_youtube_service(api_keys[current_key_index])
+# youtube = build_youtube_service(api_keys[current_key_index])
 
 
 async def get_channel_details_from_id(channel_id):
