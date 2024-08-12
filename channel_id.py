@@ -46,8 +46,11 @@ async def get_channel_details_from_id(channel_id):
 
     channel_details_clean = response.get('items', [{}])[0]
 
-    # Extract madeForKids and set to None if it's not provided
+    # Check if madeForKids is None (null in JSON) and assign it None if it is
     made_for_kids = channel_details_clean.get("status", {}).get("madeForKids", None)
+    if made_for_kids is 'null' or made_for_kids is None:
+        channel_details_clean['status'] = channel_details_clean.get('status', {})
+        channel_details_clean['status']['madeForKids'] = None
 
     return {
         'channel_link': f"www.youtube.com/channel/{channel_details_clean.get('id', '')}",
