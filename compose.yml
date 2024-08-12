@@ -1,16 +1,18 @@
+version: '3.8'
+
 services:
   flask-app:
     build: .
     environment:
       - FLASK_ENV=production
     deploy:
-      replicas: 3
       resources:
         limits:
-          cpus: "2"
-          memory: 2G
+          cpus: "3"  # Utilize more CPU resources
+          memory: 3G  # Increase memory allocation
       restart_policy:
         condition: on-failure
     ports:
-      - "8000:8000"  # This maps container port 8000 to host port 8000
-    command: gunicorn -w 4 -k uvicorn.workers.UvicornWorker channel_id_route:app --bind 0.0.0.0:8000
+      - "8000:8000"  # Bind the container port to the host port
+    command: gunicorn -w 4 -t 120 -k uvicorn.workers.UvicornWorker --threads 4 --worker-connections 1000 channel_id_route:app --bind 0.0.0.0:8000
+    
