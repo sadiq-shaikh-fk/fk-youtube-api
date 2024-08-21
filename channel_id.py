@@ -70,5 +70,6 @@ async def get_channel_details_from_id(channel_id):
         'channel_made_for_kids': channel_details_clean.get("status", {}).get("madeForKids", None),
         'channel_trailer_video_url': channel_details_clean.get("brandingSettings", {}).get("channel", {}).get("unsubscribedTrailer", ""),
         'channel_keywords': channel_details_clean.get("brandingSettings", {}).get("channel", {}).get("keywords", ""),
-        'channel_image_banner_url': channel_details_clean.get("brandingSettings", {}).get("image", {}).get("bannerExternalUrl", "")
+        'channel_image_banner_url': channel_details_clean.get("brandingSettings", {}).get("image", {}).get("bannerExternalUrl", ""),
+        'input_channel_id' : channel_id
     }
