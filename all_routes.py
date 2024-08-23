@@ -10,7 +10,7 @@ async def get_channel_details(channel_id):
         details = await get_channel_details_from_id(channel_id)
         return jsonify(details), 200
     except Exception as e:
-        return jsonify({"error": str(e)}), 500
+        return jsonify({"error": str(e)}), 411
 
 # ------------------------- API CALL FOR PLAYLIST_ITEMS(all video id) EXTRACTION -------------------------
 @app.route('/playlistItems/<string:playlist_id>', methods=['GET'])
