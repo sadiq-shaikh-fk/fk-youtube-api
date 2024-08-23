@@ -15,4 +15,4 @@ RUN pip install --no-cache-dir --upgrade pip && \
 EXPOSE 8000
 
 # Run Gunicorn with Uvicorn workers
-CMD ["gunicorn", "-w", "4", "-k", "uvicorn.workers.UvicornWorker", "channel_id_route:app", "--bind", "0.0.0.0:8000"]
+CMD ["gunicorn", "-w", "4", "-k", "uvicorn.workers.UvicornWorker", "all_routes:app", "--bind", "0.0.0.0:8000"]
