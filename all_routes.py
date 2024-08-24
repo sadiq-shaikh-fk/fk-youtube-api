@@ -4,7 +4,7 @@ from all_api_functions import get_channel_details_from_id, get_video_id_from_pla
 app = Quart(__name__)
 
 # ------------------------- API CALL TEST ROUTE -------------------------
-@app.route('/', methods = ['GET'])
+@app.route('/test', methods = ['GET'])
 async def test_route():
     return jsonify({'status':'Test route works!'})
 
