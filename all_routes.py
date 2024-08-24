@@ -3,6 +3,11 @@ from all_api_functions import get_channel_details_from_id, get_video_id_from_pla
 
 app = Quart(__name__)
 
+# ------------------------- API CALL TEST ROUTE -------------------------
+@app.route('/', methods = ['GET'])
+async def test_route():
+    return jsonify({'status':'Test route works!'})
+
 # ------------------------- API CALL FOR CHANNEL_ID EXTRACTION -------------------------
 @app.route('/channel/<string:channel_id>', methods=['GET'])
 async def get_channel_details(channel_id):
