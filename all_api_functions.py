@@ -75,7 +75,7 @@ async def get_channel_details_from_id(channel_id):
         'input_channel_id' : channel_id
     }
 
-async def get_video_id_from_playlist(upload_playlist_id, pageToken=None):
+async def get_video_id_from_playlist(playlist_id, pageToken=None):
     global current_key_index, youtube
 
     async with aiohttp.ClientSession() as session:
@@ -83,7 +83,7 @@ async def get_video_id_from_playlist(upload_playlist_id, pageToken=None):
             youtube = await build_youtube_service(api_keys[current_key_index])
             request = youtube.playlistItems().list(
             part="id,snippet,status,contentDetails",
-            playlistId = upload_playlist_id,
+            playlistId = playlist_id,
             maxResults = 50,
             pageToken=pageToken
             )
@@ -106,7 +106,7 @@ async def get_video_id_from_playlist(upload_playlist_id, pageToken=None):
 
     nextPageToken = response.get('nextPageToken')  # Get nextPageToken if it exists, otherwise None
     return {
-        'input_playlist_id': upload_playlist_id,
+        'input_playlist_id': playlist_id,
         'video_ids': video_ids,
         'nextPageToken': nextPageToken
     }
