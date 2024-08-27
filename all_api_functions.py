@@ -110,3 +110,35 @@ async def get_video_id_from_playlist(playlist_id, pageToken=None):
         'video_ids': video_ids,
         'nextPageToken': nextPageToken
     }
+
+
+async def get_video_details(video_id, pageToken=None):
+    global current_key_index, youtube
+
+    async with aiohttp.ClientSession() as session:
+        while True:
+            youtube = await build_youtube_service(api_keys[current_key_index])
+            request = youtube.videos().list(
+            part="id,snippet,status,contentDetails",
+            id = video_id
+            )
+            # request.uri = fix_url(str(request.uri))     # Build the URL from the request
+            try:
+                # request execution
+                response = request.execute() # 1 credit used
+                break
+
+            except HttpError as e:
+                if e.resp.status == 403 and 'exceeded' in e.reason:
+                    print(f"Quota exceeded for key: {api_keys[current_key_index]}. Trying next key...")
+                    current_key_index = (current_key_index + 1) % len(api_keys)
+                    await asyncio.sleep(1)  # Avoid too rapid retries
+                else:
+                    return {"error": f"API Error: {str(e)}"}
+    
+    video_details_clean = response.get('items', [{}])
+
+    return{
+        'vide_title' : video_details_clean.get("snippet", {}).get("title", ""),
+        'input_video_id' : video_id
+    }
