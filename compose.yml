@@ -3,6 +3,8 @@ services:
     build: .
     environment:
       - FLASK_ENV=production
+    env_file:
+      - .env  # Load environment variables from the .env file
     deploy:
       resources:
         limits:
