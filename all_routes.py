@@ -1,5 +1,5 @@
-from quart import Quart, jsonify
-from all_api_functions import get_channel_details_from_id, get_video_id_from_playlist
+from quart import Quart, jsonify, request
+from all_api_functions import get_channel_details_from_id, get_video_id_from_playlist, get_all_video_details
 
 app = Quart(__name__)
 
@@ -48,6 +48,17 @@ async def get_playlist_details(playlist_id):
     except Exception as e:
         return jsonify({"error": str(e)}), 412
 
+@app.route('/videos', methods=['POST'])
+async def get_video_details():
+    try:
+        data = await request.json
+        all_video_ids = data.get('video_ids', [])    
+    
+        details = await get_all_video_details(all_video_ids)
+        return jsonify(details), 200
+    
+    except Exception as e:
+        return jsonify({"error": str(e)}), 413  
 
 # ---------- call the main file ----------
 if __name__ == '__main__':
