@@ -79,7 +79,7 @@ async def get_channel_details_from_id(channel_id):
 
 # ------------------------- LOGIC FOR PLAYLIST_ID EXTRACTION -------------------------
 async def get_video_id_from_playlist(playlist_id, pageToken=None):
-    global current_key_index, youtube
+    global current_key_index, request_count
 
     async with aiohttp.ClientSession() as session:
         while True:
@@ -123,7 +123,7 @@ async def get_video_id_from_playlist(playlist_id, pageToken=None):
 
 # ------------------------- LOGIC FOR VIDEOS EXTRACTION -------------------------
 async def get_all_video_details(video_id_strings):
-    global current_key_index, youtube
+    global current_key_index, request_count
     response_of_all_video_ids = []
     response_of_all_video_ids_final = []
 
