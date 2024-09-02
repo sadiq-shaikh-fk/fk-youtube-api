@@ -20,7 +20,7 @@ async def get_channel_details(channel_id):
 # ------------------------- API CALL FOR PLAYLIST_ITEMS(extract all video id) EXTRACTION -------------------------
 @app.route('/playlistItems/<string:playlist_id>', methods=['GET'])
 async def get_playlist_details(playlist_id):
-    all_video_ids = {}
+    video_id_rows = []
     pageToken = None  # Initialize pageToken
 
     while True:
@@ -31,9 +31,12 @@ async def get_playlist_details(playlist_id):
         nextPageToken = playlist_item_resp.get('nextPageToken')  # Safely get nextPageToken
         
         if video_ids:
-            # Convert each video ID to a dictionary entry with the video ID as the key
+            # Create a row for each video ID
             for vid in video_ids:
-                all_video_ids[vid] = {"id": vid}  # Map the video ID as both key and value in a dict
+                video_id_rows.append({
+                    "input_playlist_id": input_playlist_id,
+                    "video_id": vid
+                })
 
         if not nextPageToken:  # Break the loop if there's no nextPageToken
             break
@@ -41,14 +44,12 @@ async def get_playlist_details(playlist_id):
         pageToken = nextPageToken  # Update pageToken with the nextPageToken for the next iteration
 
     try:
-        all_video_ids_dict = { 
-        'input_playlist_id':input_playlist_id, 
-        'video_ids': all_video_ids
-        }
-        return jsonify(all_video_ids_dict), 200
+        return jsonify(video_id_rows), 200
 
     except Exception as e:
-        return jsonify({"error": str(e)}), 412
+        return jsonify({
+                    'input_playlist_id':input_playlist_id, 
+                    "error": str(e)}), 412
 
 # ------------------------- API CALL FOR VIDEO(details of all video_ids) EXTRACTION -------------------------
 @app.route('/videos', methods=['POST'])
