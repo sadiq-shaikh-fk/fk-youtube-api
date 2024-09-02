@@ -20,7 +20,7 @@ async def get_channel_details(channel_id):
 # ------------------------- API CALL FOR PLAYLIST_ITEMS(extract all video id) EXTRACTION -------------------------
 @app.route('/playlistItems/<string:playlist_id>', methods=['GET'])
 async def get_playlist_details(playlist_id):
-    all_video_ids = []
+    all_video_ids = {}
     pageToken = None  # Initialize pageToken
 
     while True:
@@ -31,9 +31,9 @@ async def get_playlist_details(playlist_id):
         nextPageToken = playlist_item_resp.get('nextPageToken')  # Safely get nextPageToken
         
         if video_ids:
-            # Convert each video ID to a dictionary with the key "id"
-            video_ids_dict = [{"id": vid} for vid in video_ids]
-            all_video_ids.extend(video_ids_dict)  # Append all video ID dictionaries
+            # Convert each video ID to a dictionary entry with the video ID as the key
+            for vid in video_ids:
+                all_video_ids[vid] = {"id": vid}  # Map the video ID as both key and value in a dict
 
         if not nextPageToken:  # Break the loop if there's no nextPageToken
             break
