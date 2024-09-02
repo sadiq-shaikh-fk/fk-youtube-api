@@ -35,7 +35,7 @@ async def get_playlist_details(playlist_id):
             for vid in video_ids:
                 video_id_rows.append({
                     "input_playlist_id": input_playlist_id,
-                    "video_id": vid
+                    "yt_video_id": vid
                 })
 
         if not nextPageToken:  # Break the loop if there's no nextPageToken
