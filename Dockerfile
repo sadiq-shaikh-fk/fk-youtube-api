@@ -11,8 +11,11 @@ COPY . /app
 RUN pip install --no-cache-dir --upgrade pip && \
     pip install --no-cache-dir -r requirements.txt
 
+# Install Celery for async tasks and Redis for caching
+RUN pip install celery[redis]
+
 # Make port 8000 available to the world outside this container
 EXPOSE 8000
 
-# Run Gunicorn with Uvicorn workers
+# Default command to run Gunicorn
 CMD ["gunicorn", "-w", "4", "-k", "uvicorn.workers.UvicornWorker", "all_routes:app", "--bind", "0.0.0.0:8000"]
