@@ -131,6 +131,7 @@ async def get_video_id_from_playlist(upload_playlist_id, pageToken=None):
         'video_ids': video_ids,
         'nextPageToken': nextPageToken
     }
+
 # ------------------------- LOGIC FOR VIDEOS EXTRACTION -------------------------
 async def get_all_video_details(video_id_strings):
     global current_key_index, request_count

@@ -42,7 +42,7 @@ async def get_videos_details():
 
         video_details = await get_all_video_details(video_ids)
 
-        return jsonify(video_details)
+        return jsonify(video_details), 200
     
     except Exception as e:
         return jsonify({"error": str(e)}), 413
