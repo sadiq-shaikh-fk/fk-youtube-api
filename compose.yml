@@ -3,30 +3,28 @@ services:
     build: .
     environment:
       - FLASK_ENV=production
-    env_file:
-      - .env  # Load environment variables from the .env file
-      - REDIS_URL=redis://redis:6379/0  # Redis URL for async tasks and caching
+      - REDIS_URL=redis://redis:6379/0  # Correct Redis URL configuration
     deploy:
       resources:
         limits:
-          cpus: "3"  # Limit CPU to prevent overloading
-          memory: 3G  # Limit memory allocation to 3GB
+          cpus: "3"
+          memory: 3G
       restart_policy:
         condition: on-failure
     ports:
-      - "8000:8000"  # Expose port 8000
+      - "8000:8000"
     depends_on:
-      - redis  # Ensure Redis starts before Flask
+      - redis
     command: gunicorn -w 4 -k uvicorn.workers.UvicornWorker all_routes:app --bind 0.0.0.0:8000 --timeout 600
 
   redis:
-    image: "redis:alpine"  # Redis service for caching and task queue
+    image: "redis:alpine"
     ports:
       - "6379:6379"
 
   celery-worker:
     build: .
-    command: celery -A app.celery worker --loglevel=info  # Celery worker to process tasks asynchronously
+    command: celery -A app.celery worker --loglevel=info
     environment:
       - FLASK_ENV=production
       - REDIS_URL=redis://redis:6379/0
@@ -36,7 +34,7 @@ services:
 
   celery-beat:
     build: .
-    command: celery -A app.celery beat --loglevel=info  # Celery beat for periodic tasks
+    command: celery -A app.celery beat --loglevel=info
     environment:
       - FLASK_ENV=production
       - REDIS_URL=redis://redis:6379/0
