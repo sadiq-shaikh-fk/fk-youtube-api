@@ -20,11 +20,17 @@ async def get_channel_details(channel_id):
         return jsonify({"error": str(e)}), 411
 
 # ------------------------- API CALL FOR PLAYLIST_ITEMS(extract all video id) EXTRACTION -------------------------
-@app.route('/playlistItems/<string:playlist_id>', methods=['GET'])
-async def get_playlist_details(playlist_id):
+@app.route('/playlistItems', methods=['GET'])
+async def get_playlist_details():
     try:
+        playlist_id = request.args.get('playlist_id')  # Required playlist_id query parameter
+        max_results = request.args.get('maxResults', default=50, type=int)  # Optional maxResults query parameter
         page_token = request.args.get('pageToken')  # Optional pageToken query parameter
-        playlist_data = await get_video_id_from_playlist(playlist_id, pageToken=page_token)
+        
+        if not playlist_id:
+            return jsonify({"error": "Missing required parameter 'playlist_id'"}), 400
+        
+        playlist_data = await get_video_id_from_playlist(playlist_id, max_results=max_results, pageToken=page_token)
         return jsonify(playlist_data), 200
 
     except Exception as e:

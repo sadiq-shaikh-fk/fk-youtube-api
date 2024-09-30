@@ -85,10 +85,11 @@ async def get_channel_details_from_id(channel_id):
     }
 
 # ------------------------- LOGIC FOR PLAYLIST_ID EXTRACTION -------------------------
-async def get_video_id_from_playlist(upload_playlist_id, pageToken=None):
+async def get_video_id_from_playlist(upload_playlist_id, max_results=50, pageToken=None):
     global current_key_index, request_count
     video_ids = []
     nextPageToken = pageToken
+    total_videos_fetched = 0  # To track the number of videos fetched
 
     async with aiohttp.ClientSession() as session:
         while True:
@@ -101,10 +102,13 @@ async def get_video_id_from_playlist(upload_playlist_id, pageToken=None):
                 youtube = await build_youtube_service(api_keys[current_key_index])
                 request_count += 1
 
+                # Adjust maxResults based on the remaining needed results
+                results_to_fetch = min(max_results - total_videos_fetched, 50)
+
                 request = youtube.playlistItems().list(
                     part="id,snippet,status,contentDetails",
                     playlistId=upload_playlist_id,
-                    maxResults=50,
+                    maxResults=results_to_fetch,  # Use the adjusted maxResults
                     pageToken=nextPageToken
                 )
                 request.uri = fix_url(str(request.uri))
@@ -113,9 +117,12 @@ async def get_video_id_from_playlist(upload_playlist_id, pageToken=None):
                 items = response.get('items', [])
 
                 video_ids.extend([item['snippet']['resourceId']['videoId'] for item in items])
+                total_videos_fetched += len(items)  # Update the count
 
                 nextPageToken = response.get('nextPageToken')
-                if not nextPageToken:
+
+                # Stop if we have fetched enough videos or if there are no more videos
+                if total_videos_fetched >= max_results or not nextPageToken:
                     break
 
             except HttpError as e:
@@ -128,8 +135,8 @@ async def get_video_id_from_playlist(upload_playlist_id, pageToken=None):
 
     return {
         'input_playlist_id': upload_playlist_id,
-        'video_ids': video_ids,
-        'nextPageToken': nextPageToken
+        'video_ids': video_ids[:max_results],  # Return only up to the maxResults limit
+        'nextPageToken': nextPageToken if total_videos_fetched < max_results else None  # Only return if more results are available
     }
 
 # ------------------------- LOGIC FOR VIDEOS EXTRACTION -------------------------
