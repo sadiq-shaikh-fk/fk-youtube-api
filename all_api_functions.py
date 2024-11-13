@@ -89,7 +89,8 @@ async def get_video_id_from_playlist(upload_playlist_id, max_results=50, pageTok
     global current_key_index, request_count
     video_ids = []
     nextPageToken = pageToken
-    total_videos_fetched = 0  # To track the number of videos fetched
+    total_videos_fetched = 0
+    input_yt_channel_id = None  # Define this before the loop
 
     async with aiohttp.ClientSession() as session:
         while True:
@@ -102,26 +103,28 @@ async def get_video_id_from_playlist(upload_playlist_id, max_results=50, pageTok
                 youtube = await build_youtube_service(api_keys[current_key_index])
                 request_count += 1
 
-                # Adjust maxResults based on the remaining needed results
+                # Adjust maxResults based on remaining needed results
                 results_to_fetch = min(max_results - total_videos_fetched, 50)
 
                 request = youtube.playlistItems().list(
                     part="id,snippet,status,contentDetails",
                     playlistId=upload_playlist_id,
-                    maxResults=results_to_fetch,  # Use the adjusted maxResults
+                    maxResults=results_to_fetch,
                     pageToken=nextPageToken
                 )
                 request.uri = fix_url(str(request.uri))
 
-                response = request.execute()
+                response = request.execute()  # Note: This should ideally be an async call
                 items = response.get('items', [])
 
+                # Extract video IDs and set channel ID if not already set
                 video_ids.extend([item['snippet']['resourceId']['videoId'] for item in items])
-                total_videos_fetched += len(items)  # Update the count
-
+                if items and not input_yt_channel_id:
+                    input_yt_channel_id = items[0]['snippet'].get('videoOwnerChannelId', None)
+                
+                total_videos_fetched += len(items)
                 nextPageToken = response.get('nextPageToken')
 
-                # Stop if we have fetched enough videos or if there are no more videos
                 if total_videos_fetched >= max_results or not nextPageToken:
                     break
 
@@ -135,8 +138,9 @@ async def get_video_id_from_playlist(upload_playlist_id, max_results=50, pageTok
 
     return {
         'input_playlist_id': upload_playlist_id,
-        'video_ids': video_ids[:max_results],  # Return only up to the maxResults limit
-        'nextPageToken': nextPageToken if total_videos_fetched < max_results else None  # Only return if more results are available
+        'input_yt_channel_id': input_yt_channel_id,
+        'video_ids': video_ids[:max_results],
+        'nextPageToken': nextPageToken if total_videos_fetched < max_results else None
     }
 
 # ------------------------- LOGIC FOR VIDEOS EXTRACTION -------------------------

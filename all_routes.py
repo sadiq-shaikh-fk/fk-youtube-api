@@ -4,7 +4,7 @@ import asyncio
 
 app = Quart(__name__)
 
-# ------------------------- API CALL TEST ROUTE -------------------------
+# -------------------------------- API CALL TEST ROUTE ---------------------------------
 @app.route('/')
 async def index():
     return jsonify({'status': 'Test route works!'})
